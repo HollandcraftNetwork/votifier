@@ -70,7 +70,7 @@ public class essEcoListener implements VoteListener {
 			final Player player = Bukkit.getServer().getPlayer(username);
 			if (player != null) {
 				player.sendMessage("Thanks for voting on " + vote.getServiceName() + "!");
-				player.sendMessage(amount + " has been added to your iConomy balance.");
+				player.sendMessage(amount + " has been added to your balance.");
 			}
 		}
 	}
