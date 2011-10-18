@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.api.Economy;
+import com.vexsoftware.votifier.Votifier;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VoteListener;
 
@@ -24,6 +25,9 @@ public class essEcoListener implements VoteListener {
 
 	/** The amount to reward. */
 	private int amount = 100;
+	private String broadcast = "&4{player} just voted on {site}";
+	private String thanks = "&4Thanks for voting on {site}";
+	private String transfer = "&4{amount} has been awarded to your account!";
 
 	/**
 	 * Instantiates a new iConomy listener.
@@ -41,6 +45,9 @@ public class essEcoListener implements VoteListener {
 
 				// Write the default configuration.
 				props.setProperty("reward_amount", Integer.toString(amount));
+				props.setProperty("msg-broadcast", broadcast);
+				props.setProperty("msg-thanks", thanks);
+				props.setProperty("msg-transfer", transfer);
 				props.store(new FileWriter(configFile), "essEco Listener Configuration");
 			} else {
 				// Load the configuration.
@@ -48,6 +55,9 @@ public class essEcoListener implements VoteListener {
 			}
 
 			amount = Integer.parseInt(props.getProperty("reward_amount", "100"));
+			broadcast = props.getProperty("msg-broadcast", broadcast);
+			thanks = props.getProperty("msg-thanks", thanks);
+			transfer = props.getProperty("msg-transfer", transfer);
 		} catch (Exception ex) {
 			logger.log(Level.WARNING, "Unable to load essEcoListener.ini, using default reward value of: " + amount);
 		}
@@ -68,11 +78,17 @@ public class essEcoListener implements VoteListener {
 			
 			// Tell the player how awesome they are.
 			final Player player = Bukkit.getServer().getPlayer(username);
-			if (player != null) {
-				player.sendMessage("Thanks for voting on " + vote.getServiceName() + "!");
-				player.sendMessage(amount + " has been added to your balance.");
+			if (player != null) {				
+				player.sendMessage(format(thanks,username,amount,vote));
+				player.sendMessage(format(transfer,username,amount,vote));				
 			}
+			Votifier.getInstance().getServer().broadcastMessage(format(broadcast,username,amount,vote));
 		}
+	}
+	
+	private String format (String message, String player, Integer amount, Vote site) {
+		message.replace('&', '§').replace("§§", "&").replace("{player}", player).replace("{amount}", amount.toString()).replace("{site}", site.getServiceName());		
+		return message;
 	}
 
 }
