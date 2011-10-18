@@ -1,3 +1,4 @@
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -13,16 +14,16 @@ import com.vexsoftware.votifier.Votifier;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VoteListener;
 
+
 /**
  * A VoteListener that rewards via iConomy.
  * 
  * @author Blake Beaupain
  */
-public class essEcoListener implements VoteListener {
-
+public class essEcoListener implements VoteListener
+{
 	/** The logger instance. */
 	private static Logger logger = Logger.getLogger("essEcoListener");
-
 	/** The amount to reward. */
 	private int amount = 100;
 	private String broadcast = "&4{player} just voted on {site}";
@@ -32,12 +33,15 @@ public class essEcoListener implements VoteListener {
 	/**
 	 * Instantiates a new iConomy listener.
 	 */
-	public essEcoListener() {
+	public essEcoListener()
+	{
 		final Properties props = new Properties();
-		try {
+		try
+		{
 			// Create the file if it doesn't exist.
 			final File configFile = new File("./plugins/Votifier/essEcoListener.ini");
-			if (!configFile.exists()) {
+			if (!configFile.exists())
+			{
 				configFile.createNewFile();
 
 				// Load the configuration.
@@ -49,7 +53,9 @@ public class essEcoListener implements VoteListener {
 				props.setProperty("msg-thanks", thanks);
 				props.setProperty("msg-transfer", transfer);
 				props.store(new FileWriter(configFile), "essEco Listener Configuration");
-			} else {
+			}
+			else
+			{
 				// Load the configuration.
 				props.load(new FileReader(configFile));
 			}
@@ -58,37 +64,51 @@ public class essEcoListener implements VoteListener {
 			broadcast = props.getProperty("msg-broadcast", broadcast);
 			thanks = props.getProperty("msg-thanks", thanks);
 			transfer = props.getProperty("msg-transfer", transfer);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			logger.log(Level.WARNING, "Unable to load essEcoListener.ini, using default reward value of: " + amount);
 		}
 	}
 
 	@Override
-	public void voteMade(final Vote vote) {
+	public void voteMade(final Vote vote)
+	{
 		final String username = vote.getUsername();
-		if (Economy.playerExists(username)) {
-			
-			try {
-				Economy.add(username,amount);
+		if (Economy.playerExists(username))
+		{
+
+			try
+			{
+				Economy.add(username, amount);
 			}
 			catch (Exception ex)
 			{
 				System.out.println("[Votifier] essEconomy error: " + ex.getMessage());
 			}
-			
+
 			// Tell the player how awesome they are.
 			final Player player = Bukkit.getServer().getPlayer(username);
-			if (player != null) {				
-				player.sendMessage(format(thanks,username,amount,vote));
-				player.sendMessage(format(transfer,username,amount,vote));				
+			if (player != null)
+			{
+				if (thanks != "")
+				{
+					player.sendMessage(format(thanks, username, amount, vote));
+				}
+				if (transfer != "")
+				{
+					player.sendMessage(format(transfer, username, amount, vote));
+				}
 			}
-			Votifier.getInstance().getServer().broadcastMessage(format(broadcast,username,amount,vote));
+			if (broadcast != "")
+			{
+				Votifier.getInstance().getServer().broadcastMessage(format(broadcast, username, amount, vote));
+			}
 		}
 	}
-	
-	private String format (String message, String player, Integer amount, Vote site) {
-		message.replace('&', '§').replace("§§", "&").replace("{player}", player).replace("{amount}", amount.toString()).replace("{site}", site.getServiceName());		
-		return message;
-	}
 
+	private String format(String message, String player, Integer amount, Vote site)
+	{
+		return message.replace('&', '§').replace("§§", "&").replace("{player}", player).replace("{amount}", amount.toString()).replace("{site}", site.getServiceName());
+	}
 }
