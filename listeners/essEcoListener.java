@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -16,9 +15,10 @@ import com.vexsoftware.votifier.model.VoteListener;
 
 
 /**
- * A VoteListener that rewards via iConomy.
+ * A VoteListener that rewards via EssEco.
  * 
  * @author Blake Beaupain
+ * @author KHobbits
  */
 public class essEcoListener implements VoteListener
 {
