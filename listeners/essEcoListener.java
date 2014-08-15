@@ -25,7 +25,6 @@ public class essEcoListener implements VoteListener
 	/** The logger instance. */
 	private static Logger logger = Logger.getLogger("essEcoListener");
 	/** The amount to reward. */
-	private int amount = 100;
 	private String broadcast = "&4{player} just voted on {site}";
 
 	/**
