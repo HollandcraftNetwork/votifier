@@ -27,8 +27,6 @@ public class essEcoListener implements VoteListener
 	/** The amount to reward. */
 	private int amount = 100;
 	private String broadcast = "&4{player} just voted on {site}";
-	private String thanks = "&4Thanks for voting on {site}";
-	private String transfer = "&4{amount} has been awarded to your account!";
 
 	/**
 	 * Instantiates a new iConomy listener.
@@ -48,10 +46,7 @@ public class essEcoListener implements VoteListener
 				props.load(new FileReader(configFile));
 
 				// Write the default configuration.
-				props.setProperty("reward_amount", Integer.toString(amount));
 				props.setProperty("msg-broadcast", broadcast);
-				props.setProperty("msg-thanks", thanks);
-				props.setProperty("msg-transfer", transfer);
 				props.store(new FileWriter(configFile), "essEco Listener Configuration");
 			}
 			else
@@ -60,14 +55,11 @@ public class essEcoListener implements VoteListener
 				props.load(new FileReader(configFile));
 			}
 
-			amount = Integer.parseInt(props.getProperty("reward_amount", "100"));
 			broadcast = props.getProperty("msg-broadcast", broadcast);
-			thanks = props.getProperty("msg-thanks", thanks);
-			transfer = props.getProperty("msg-transfer", transfer);
 		}
 		catch (Exception ex)
 		{
-			logger.log(Level.WARNING, "Unable to load essEcoListener.ini, using default reward value of: " + amount);
+			logger.log(Level.WARNING, "Unable to load essEcoListener.ini, using default reward value of");
 		}
 	}
 
@@ -75,36 +67,8 @@ public class essEcoListener implements VoteListener
 	public void voteMade(final Vote vote)
 	{
 		final String username = vote.getUsername();
-		if (Economy.playerExists(username))
-		{
-
-			try
-			{
-				Economy.add(username, amount);
-			}
-			catch (Exception ex)
-			{
-				System.out.println("[Votifier] essEconomy error: " + ex.getMessage());
-			}
-
-			// Tell the player how awesome they are.
-			final Player player = Bukkit.getServer().getPlayer(username);
-			if (player != null)
-			{
-				if (thanks != "")
-				{
-					player.sendMessage(format(thanks, username, amount, vote));
-				}
-				if (transfer != "")
-				{
-					player.sendMessage(format(transfer, username, amount, vote));
-				}
-			}
-			if (broadcast != "")
-			{
 				Votifier.getInstance().getServer().broadcastMessage(format(broadcast, username, amount, vote));
-			}
-		}
+
 	}
 
 	private String format(String message, String player, Integer amount, Vote site)
